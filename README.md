@@ -13,6 +13,7 @@
   <a href="#overview">Overview</a> ·
   <a href="#features">Features</a> ·
   <a href="#tech-stack">Tech Stack</a> ·
+  <a href="#live-application">Live App</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="#api-summary">API</a> ·
   <a href="#deployment">Deployment</a>
@@ -24,6 +25,16 @@
   <a href="backend/src/db/migrations.sql"><img src="https://img.shields.io/badge/database-PostgreSQL-4169E1?style=flat-square" alt="Database" /></a>
   <a href="backend/src/middleware/auth.js"><img src="https://img.shields.io/badge/auth-JWT%20%2B%20RBAC-111827?style=flat-square" alt="Auth" /></a>
 </p>
+
+---
+
+## Live Application
+
+| Environment | URL |
+| --- | --- |
+| **Frontend** | https://stockpulse-erp-blue.vercel.app/login |
+| **Backend** | https://stockpulse-erp.onrender.com |
+| **API Docs** | [docs/api.md](docs/api.md) |
 
 ---
 
