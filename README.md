@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # StockPulse ERP + CRM
 
 A complete **Mini ERP + CRM Operations Portal** for a wholesale/distribution
@@ -242,3 +243,6 @@ top-to-bottom against a fresh seeded DB).
 - The provided `backend/.env` contains a local-development-only JWT secret and
   a default local Postgres URL. For any non-local environment, create your own
   `.env` from `.env.example` and use real secrets.
+=======
+# StockPulse-erp
+>>>>>>> 68df4803e323a4f645eefc0a32c0df22c4c0f6ab
