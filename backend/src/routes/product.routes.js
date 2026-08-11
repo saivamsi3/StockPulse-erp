@@ -23,16 +23,19 @@ const router = express.Router();
 
 router.use(requireAuth);
 
+// Read-only access for Admin, Sales, Warehouse, Accounts
 router.get('/', list);
 router.get('/categories', categories);
-router.get('/movements/recent', recentMovements);
+router.get('/movements/recent', requireRole('Admin', 'Warehouse', 'Accounts'), recentMovements);
 router.get('/:id', getOne);
-router.get('/:id/movements', movements);
+router.get('/:id/movements', requireRole('Admin', 'Warehouse', 'Accounts'), movements);
 
+// Product management restricted to Admin and Warehouse
 router.post('/', requireRole('Admin', 'Warehouse'), createProductValidator, validate, create);
 router.put('/:id', requireRole('Admin', 'Warehouse'), updateProductValidator, validate, update);
-router.delete('/:id', requireRole('Admin'), remove);
+router.delete('/:id', requireRole('Admin', 'Warehouse'), remove);
 
+// Stock adjustment restricted to Admin and Warehouse
 router.post(
   '/:id/stock',
   requireRole('Admin', 'Warehouse'),

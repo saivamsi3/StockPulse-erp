@@ -15,7 +15,7 @@ export default function ChallanDetail() {
   const [error, setError] = useState(null);
   const [action, setAction] = useState(null);
 
-  const canConfirm = user?.role === 'Admin' || user?.role === 'Sales' || user?.role === 'Warehouse';
+  const canConfirm = user?.role === 'Admin' || user?.role === 'Sales';
   const canCancel = user?.role === 'Admin' || user?.role === 'Sales';
 
   async function load() {

@@ -5,6 +5,7 @@ const authRoutes = require('./routes/auth.routes');
 const customerRoutes = require('./routes/customer.routes');
 const productRoutes = require('./routes/product.routes');
 const challanRoutes = require('./routes/challan.routes');
+const userRoutes = require('./routes/user.routes');
 const { requireAuth } = require('./middleware/auth');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/challans', challanRoutes);
+app.use('/api/users', userRoutes);
 
 app.use('/api', notFoundHandler);
 app.use(errorHandler);
