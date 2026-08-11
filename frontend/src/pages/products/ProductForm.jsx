@@ -15,6 +15,26 @@ const emptyForm = {
   is_active: true,
 };
 
+function buildSku(name, category) {
+  const cat = (category || 'GEN')
+    .replace(/[^A-Za-z0-9]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w[0].toUpperCase())
+    .join('')
+    .slice(0, 3);
+  const namePart = (name || '')
+    .replace(/[^A-Za-z0-9]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w[0].toUpperCase())
+    .join('')
+    .slice(0, 4);
+  return `${cat}-${namePart || 'ITEM'}`;
+}
+
 export default function ProductForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
@@ -24,6 +44,13 @@ export default function ProductForm() {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [skuEdited, setSkuEdited] = useState(false);
+
+  useEffect(() => {
+    if (isEdit || skuEdited) return;
+    if (!form.name && !form.category) return;
+    setForm((f) => ({ ...f, sku: buildSku(f.name, f.category) }));
+  }, [form.name, form.category, isEdit, skuEdited]);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -46,6 +73,7 @@ export default function ProductForm() {
   }, [id, isEdit]);
 
   function setField(field, value) {
+    if (field === 'sku') setSkuEdited(true);
     setForm((f) => ({ ...f, [field]: value }));
   }
 
@@ -112,6 +140,7 @@ export default function ProductForm() {
               disabled={isEdit}
               required
             />
+            {!isEdit && <small className="muted">Auto-generated from name and category.</small>}
           </div>
           <div className="form-group">
             <label>Category</label>

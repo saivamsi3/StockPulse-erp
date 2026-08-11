@@ -14,7 +14,6 @@ export default function ChallanForm() {
   const [customerId, setCustomerId] = useState('');
   const [lines, setLines] = useState([]);
   const [notes, setNotes] = useState('');
-  const [customerSearch, setCustomerSearch] = useState('');
   const [productSearch, setProductSearch] = useState('');
   const [showProductPicker, setShowProductPicker] = useState(false);
 
@@ -26,7 +25,7 @@ export default function ChallanForm() {
     setLoading(true);
     setError(null);
     Promise.all([
-      listCustomers({ limit: 100, search: customerSearch }),
+      listCustomers({ limit: 100 }),
       listProducts({ limit: 100, search: productSearch }),
     ])
       .then(([cRes, pRes]) => {
@@ -35,7 +34,7 @@ export default function ChallanForm() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [customerSearch, productSearch]);
+  }, [productSearch]);
 
   const filteredProducts = useMemo(
     () => products.filter((p) => !lines.some((l) => l.product_id === p.id)),
@@ -114,14 +113,6 @@ export default function ChallanForm() {
                   </option>
                 ))}
               </select>
-            </div>
-            <div className="form-group">
-              <label>Customer search</label>
-              <input
-                value={customerSearch}
-                onChange={(e) => setCustomerSearch(e.target.value)}
-                placeholder="Filter customer list..."
-              />
             </div>
           </div>
 
