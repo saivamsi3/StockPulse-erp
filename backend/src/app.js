@@ -14,7 +14,7 @@ const app = express();
 app.use(cors({ origin: corsOrigins, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 
-app.get('/health', (req, res) => {
+app.get('/', (req, res) => {
   res.json({ success: true, data: { status: 'ok', uptime: process.uptime() } });
 });
 
