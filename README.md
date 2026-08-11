@@ -34,7 +34,6 @@
 | --- | --- |
 | **Frontend** | https://stockpulse-erp-blue.vercel.app/ |
 | **Backend** | https://stockpulse-erp.onrender.com |
-| **API Docs** | [docs/api.md](docs/api.md) |
 
 ---
 
