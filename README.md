@@ -1,248 +1,351 @@
-<<<<<<< HEAD
-# StockPulse ERP + CRM
+<p align="center">
+  <br />
+  <img src="https://img.shields.io/badge/StockPulse-ERP%20%26%20CRM-2b6cb0?style=for-the-badge" alt="StockPulse ERP + CRM" />
+  <br />
+  <br />
+  A lightweight operations portal for wholesale and distribution teams.
+  <br />
+  Customers, inventory, stock movements, and sales challans in one place.
+  <br />
+</p>
 
-A complete **Mini ERP + CRM Operations Portal** for a wholesale/distribution
-company. Sales, warehouse, and accounts teams manage customers, products,
-stock, and sales challans through a single web app.
+<p align="center">
+  <a href="#overview">Overview</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#tech-stack">Tech Stack</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#api-summary">API</a> ·
+  <a href="#deployment">Deployment</a>
+</p>
 
-- **Backend**: Node.js + Express.js + PostgreSQL (REST API, JWT auth, role-based access)
-- **Frontend**: React 18 + Vite (responsive admin UI)
-- **Language**: JavaScript only (both apps)
+<p align="center">
+  <a href="backend/package.json"><img src="https://img.shields.io/badge/backend-Node.js%20%2B%20Express-339933?style=flat-square" alt="Backend" /></a>
+  <a href="frontend/package.json"><img src="https://img.shields.io/badge/frontend-React%2018%20%2B%20Vite-61DAFB?style=flat-square" alt="Frontend" /></a>
+  <a href="backend/src/db/migrations.sql"><img src="https://img.shields.io/badge/database-PostgreSQL-4169E1?style=flat-square" alt="Database" /></a>
+  <a href="backend/src/middleware/auth.js"><img src="https://img.shields.io/badge/auth-JWT%20%2B%20RBAC-111827?style=flat-square" alt="Auth" /></a>
+</p>
+
+---
+
+## Overview
+
+StockPulse is built for the day-to-day workflow of a small ERP/CRM:
+
+| Team | What they get |
+| --- | --- |
+| **Sales** | Manage customers, follow-ups, and sales challans |
+| **Warehouse** | Manage products, stock levels, and inventory movements |
+| **Accounts / Admin** | Role-based access to operational records |
+
+Challan confirmation is transactional, so stock is never partially deducted.
 
 ---
 
 ## Features
 
-| Module | What you can do |
-|---|---|
-| **Auth & Roles** | JWT login; roles Admin, Sales, Warehouse, Accounts; role-guarded endpoints |
-| **Customer CRM** | Add/edit/search customers, customer detail page, follow-up notes timeline, status/type filters, pagination |
-| **Product & Inventory** | Product CRUD, opening-stock logging, manual stock adjustments, append-only stock movement history, low-stock indicators |
-| **Sales Challan** | Create draft challans (multi-product), auto challan number, transactional confirm that deducts stock, oversell rejection with no partial deduction, line-item **product snapshots** (name/SKU/price at sale time), cancel |
+| Area | Capabilities |
+| --- | --- |
+| **Authentication** | JWT login, current-user endpoint, role-protected routes |
+| **Roles** | Admin, Sales, Warehouse, and Accounts permissions |
+| **Customers** | Create, edit, search, filter, paginate, and view customer details |
+| **Follow-ups** | Customer follow-up notes with timeline history |
+| **Products** | Product CRUD, category filtering, low-stock indicators |
+| **Inventory** | Opening stock, manual stock adjustments, append-only stock movements |
+| **Challans** | Draft creation, multi-product line items, auto challan numbers |
+| **Stock Safety** | Atomic confirmation, oversell rejection, row-level stock locking |
+| **History Accuracy** | Product name, SKU, and price snapshots stored on challan lines |
 
-See [docs/architecture.md](docs/architecture.md) for a deep dive.
-
----
-
-## Tech stack
-
-- Backend: Node.js ≥ 18, Express 4, `pg`, `bcryptjs`, `jsonwebtoken`, `express-validator`, `cors`, `dotenv`
-- Frontend: React 18, Vite 5, React Router 6
-- Database: PostgreSQL 14+
+> Read the deeper technical notes in [docs/architecture.md](docs/architecture.md).
 
 ---
 
-## Project structure
+## Tech Stack
 
+| Layer | Tools |
+| --- | --- |
+| **Frontend** | React 18, Vite 5, React Router 6 |
+| **Backend** | Node.js 18+, Express 4 |
+| **Database** | PostgreSQL 14+ |
+| **Auth** | JWT, bcryptjs |
+| **Validation** | express-validator |
+| **API Access** | REST endpoints under `/api` |
+
+---
+
+## Project Structure
+
+```text
+StockPulse-erp/
+|-- backend/
+|   |-- src/
+|   |   |-- config/        # Environment and PostgreSQL pool
+|   |   |-- controllers/   # Request handlers
+|   |   |-- db/            # Migrations, seed, setup, reset scripts
+|   |   |-- middleware/    # Auth, role guard, validation, errors
+|   |   |-- models/        # SQL data access
+|   |   |-- routes/        # REST routes
+|   |   |-- services/      # Challan and stock business logic
+|   |   |-- validators/    # express-validator schemas
+|   |   |-- app.js
+|   |   `-- server.js
+|   `-- package.json
+|-- frontend/
+|   |-- src/
+|   |   |-- api/           # Fetch client and API modules
+|   |   |-- components/    # Shared UI components
+|   |   |-- context/       # Auth and theme state
+|   |   |-- pages/         # Dashboard, auth, customers, products, challans
+|   |   `-- styles/
+|   `-- package.json
+|-- docs/
+|   `-- architecture.md
+|-- postman/
+|   `-- stockpulse-erp.postman_collection.json
+|-- plan.md
+`-- README.md
 ```
-stockpulse-erp/
-├── backend/
-│   ├── .env.example            # copy to .env
-│   ├── src/
-│   │   ├── server.js / app.js  # entry points
-│   │   ├── config/             # env + pg pool
-│   │   ├── middleware/         # auth, role guard, validation, errors
-│   │   ├── models/             # raw SQL data access
-│   │   ├── services/           # transactional business logic (challans, stock)
-│   │   ├── controllers/        # request handlers
-│   │   ├── routes/             # API routes
-│   │   ├── validators/         # express-validator chains
-│   │   └── db/                 # migrations.sql, seed, setup/reset scripts
-│   └── package.json
-├── frontend/
-│   ├── .env.example
-│   ├── src/
-│   │   ├── api/                # fetch client + per-module API wrappers
-│   │   ├── context/            # AuthContext (JWT state)
-│   │   ├── components/         # Layout, ProtectedRoute, tables, modals, badges
-│   │   ├── pages/              # auth, dashboard, customers/, products/, challans/
-│   │   └── styles/index.css
-│   └── package.json
-├── postman/
-│   └── stockpulse-erp.postman_collection.json
-├── docs/
-│   └── architecture.md
-└── README.md
-```
 
 ---
 
-## Local setup
+## Quick Start
 
 ### Prerequisites
 
-- Node.js ≥ 18
-- PostgreSQL 14+ running locally
+- **Node.js** 18 or newer
+- **PostgreSQL** 14 or newer
+- **npm**
 
-### 1. Database
-
-```bash
-cd backend
-cp .env.example .env       # Windows: copy .env.example .env
-# edit .env → set DATABASE_URL to your Postgres connection
-createdb stockpulse        # create the database (or via psql)
-npm install
-npm run db:setup           # runs migrations + seed in one step
-```
-
-`npm run db:setup` = `db:migrate` + `db:seed`. To wipe and start fresh:
-`npm run db:reset && npm run db:setup`.
-
-### 2. Backend
+### 1. Configure the Backend
 
 ```bash
 cd backend
+cp .env.example .env
 npm install
-npm run dev                # http://localhost:5000
 ```
 
-Health check: `GET http://localhost:5000/health`
+Update `backend/.env` with your PostgreSQL connection:
 
-### 3. Frontend
+```env
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/stockpulse
+JWT_SECRET=replace-this-with-a-long-random-secret
+```
+
+Create the database if it does not exist yet:
+
+```bash
+createdb stockpulse
+```
+
+Run migrations and seed data:
+
+```bash
+npm run db:setup
+```
+
+To reset everything during development:
+
+```bash
+npm run db:reset
+npm run db:setup
+```
+
+### 2. Start the Backend
+
+```bash
+cd backend
+npm run dev
+```
+
+- Backend URL: `http://localhost:5000`
+- Health check: `GET http://localhost:5000/health`
+
+### 3. Start the Frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev                # http://localhost:5173
+npm run dev
 ```
 
-The Vite dev server proxies `/api` to `http://localhost:5000`, so no extra
-config is needed locally. To point at a remote backend, set `VITE_API_URL`
-in `frontend/.env`.
+- Frontend URL: `http://localhost:5173`
+
+During local development, Vite proxies `/api` requests to `http://localhost:5000`.
 
 ---
 
-## Test login credentials (seeded)
+## Seeded Login Accounts
 
-Password for **all** accounts is `password123`:
+All seeded users use the same password: `password123`
 
-| Role      | Email                       |
-|-----------|-----------------------------|
-| Admin     | `admin@stockpulse.com`      |
-| Sales     | `sales@stockpulse.com`      |
-| Warehouse | `warehouse@stockpulse.com`  |
-| Accounts  | `accounts@stockpulse.com`   |
-
-The login page has one-click buttons that prefill each account.
+| Role | Email |
+| --- | --- |
+| **Admin** | `admin@stockpulse.com` |
+| **Sales** | `sales@stockpulse.com` |
+| **Warehouse** | `warehouse@stockpulse.com` |
+| **Accounts** | `accounts@stockpulse.com` |
 
 ---
 
-## Environment variables
+## Environment Variables
 
-### Backend (`backend/.env`)
+### Backend
 
-| Variable | Required | Description |
-|---|---|---|
-| `NODE_ENV` | no | `development` / `production` |
-| `PORT` | no | API port (default `5000`) |
-| `DATABASE_URL` | yes | Postgres connection string, e.g. `postgres://user:pass@host:5432/db` |
-| `JWT_SECRET` | yes | Long random string; never commit a real one |
-| `JWT_EXPIRES_IN` | no | Token lifetime (default `8h`) |
-| `CORS_ORIGINS` | no | Comma-separated allowed origins (default `http://localhost:5173`) |
+Create `backend/.env` from `backend/.env.example`.
 
-### Frontend (`frontend/.env`)
+| Variable | Required | Default | Description |
+| --- | --- | --- | --- |
+| `NODE_ENV` | No | `development` | Runtime environment |
+| `PORT` | No | `5000` | API server port |
+| `DATABASE_URL` | Yes | Local Postgres example | PostgreSQL connection string |
+| `JWT_SECRET` | Yes | Example only | Secret used to sign JWTs |
+| `JWT_EXPIRES_IN` | No | `8h` | Token lifetime |
+| `CORS_ORIGINS` | No | `http://localhost:5173` | Comma-separated allowed origins |
+
+### Frontend
+
+Create `frontend/.env` from `frontend/.env.example`.
 
 | Variable | Description |
-|---|---|
-| `VITE_API_URL` | Backend base URL. Leave empty to use the dev proxy. |
+| --- | --- |
+| `VITE_API_URL` | Backend base URL. Leave empty locally to use the Vite proxy. |
+
+For deployment, set `VITE_API_URL` to your backend API base URL, for example:
+
+```env
+VITE_API_URL=https://your-backend.example.com/api
+```
 
 ---
 
-## API overview
+## API Summary
 
-All endpoints under `/api`. Auth: `Authorization: Bearer <token>`.
+All API routes are mounted under `/api`. Protected routes expect:
 
-| Method | Path | Description |
-|---|---|---|
-| POST | `/auth/login` | Login → `{ token, user }` |
-| GET | `/auth/me` | Current user |
-| GET | `/customers?page=&limit=&search=&status=&customer_type=` | List/search customers |
-| POST | `/customers` | Create customer |
-| GET | `/customers/:id` | Customer detail |
-| PUT | `/customers/:id` | Update customer |
-| DELETE | `/customers/:id` | Delete customer (Admin/Sales) |
-| GET | `/customers/:id/follow-ups` | Follow-up notes |
-| POST | `/customers/:id/follow-ups` | Add follow-up note (Admin/Sales) |
-| GET | `/products?page=&limit=&search=&category=&lowStock=` | List/search products |
-| POST | `/products` | Create product (Admin/Warehouse) |
-| GET | `/products/:id` | Product detail |
-| PUT | `/products/:id` | Update product (Admin/Warehouse) |
-| DELETE | `/products/:id` | Delete product (Admin) |
-| POST | `/products/:id/stock` | Adjust stock IN/OUT (Admin/Warehouse) |
-| GET | `/products/:id/movements` | Stock movement history |
-| GET | `/products/categories` | Distinct categories |
-| GET | `/challans?page=&limit=&search=&status=` | List challans |
-| POST | `/challans` | Create draft challan (Admin/Sales) |
-| GET | `/challans/:id` | Challan detail with line-item snapshots |
-| PUT | `/challans/:id/confirm` | Confirm: deduct stock atomically (Admin/Sales/Warehouse) |
-| PUT | `/challans/:id/cancel` | Cancel draft (Admin/Sales) |
+```http
+Authorization: Bearer <token>
+```
 
-A complete Postman collection covering every endpoint lives at
-`postman/stockpulse-erp.postman_collection.json` (import into Postman, run
-top-to-bottom against a fresh seeded DB).
+### Auth
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `POST` | `/auth/login` | Login and receive `{ token, user }` |
+| `GET` | `/auth/me` | Get the current authenticated user |
+
+### Customers
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/customers` | List customers with search, filters, and pagination |
+| `POST` | `/customers` | Create a customer |
+| `GET` | `/customers/:id` | Get customer details |
+| `PUT` | `/customers/:id` | Update a customer |
+| `DELETE` | `/customers/:id` | Delete a customer |
+| `GET` | `/customers/:id/follow-ups` | List customer follow-ups |
+| `POST` | `/customers/:id/follow-ups` | Add a follow-up note |
+
+### Products and Inventory
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/products` | List products with search, filters, and pagination |
+| `POST` | `/products` | Create a product |
+| `GET` | `/products/:id` | Get product details |
+| `PUT` | `/products/:id` | Update a product |
+| `DELETE` | `/products/:id` | Delete a product |
+| `POST` | `/products/:id/stock` | Adjust product stock |
+| `GET` | `/products/:id/movements` | View stock movement history |
+| `GET` | `/products/categories` | List available product categories |
+
+### Challans
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/challans` | List challans with search, status filter, and pagination |
+| `POST` | `/challans` | Create a draft challan |
+| `GET` | `/challans/:id` | Get challan details with line items |
+| `PUT` | `/challans/:id/confirm` | Confirm challan and deduct stock atomically |
+| `PUT` | `/challans/:id/cancel` | Cancel a draft challan |
+
+> Import [postman/stockpulse-erp.postman_collection.json](postman/stockpulse-erp.postman_collection.json) into Postman for a ready-to-run API collection.
 
 ---
 
-## Key business rules
+## Business Rules
 
-1. **No overselling** — confirming a challan validates and deducts stock inside
-   a single transaction with row locks (`SELECT ... FOR UPDATE`). If any line
-   lacks stock, the whole confirmation is rejected with a clear error and
-   *no* stock is deducted anywhere.
-2. **Product snapshots** — each challan line stores product name, SKU, and
-   price at the time of sale, so historical challans stay correct even after
-   product edits.
-3. **Audit trail** — every stock change (opening stock, challan sale, manual
-   adjustment) writes a `stock_movements` row with quantity, type, reason, user,
-   and optional challan link.
+1. Challan confirmation uses a database transaction.
+2. Stock rows are locked during confirmation to prevent race conditions.
+3. If any challan line does not have enough stock, confirmation fails completely.
+4. Confirmed challans deduct stock and create stock movement records.
+5. Challan line items store product snapshots, preserving historical names, SKUs, and prices.
+6. Confirmed challans cannot be cancelled in the current workflow.
+
+---
+
+## Useful Scripts
+
+### Backend
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the API with Node watch mode |
+| `npm start` | Start the API normally |
+| `npm run db:migrate` | Run database migrations |
+| `npm run db:seed` | Seed default users and sample data |
+| `npm run db:setup` | Run migrations and seed data |
+| `npm run db:reset` | Reset database tables |
+
+### Frontend
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Build the production frontend |
+| `npm run preview` | Preview the production build locally |
 
 ---
 
 ## Deployment
 
-### Backend (Render / Railway / Fly.io)
+### Backend
 
-1. Push the repo to GitHub.
-2. Create a Postgres database (Neon / Supabase / Render Postgres).
-3. Set env vars on the host: `DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGINS` (your frontend URL), `NODE_ENV=production`, `PORT`.
-4. Build command: `cd backend && npm install`
-5. Start command: `node src/server.js`
-6. Run `npm run db:setup` against the production DB once (or run migrations + seed in a one-off job).
+Suitable hosts include **Render**, **Railway**, **Fly.io**, or any Node.js host with PostgreSQL access.
 
-### Frontend (Vercel / Netlify)
+Required production environment variables:
 
-1. Framework preset: Vite.
-2. Build command: `cd frontend && npm install && npm run build`
-3. Publish directory: `frontend/dist`
-4. Env var: `VITE_API_URL=https://your-backend.onrender.com/api`
+```env
+NODE_ENV=production
+DATABASE_URL=postgres://user:password@host:5432/database
+JWT_SECRET=your-long-production-secret
+CORS_ORIGINS=https://your-frontend-domain.com
+```
 
-## Assumptions made
+Typical commands:
 
-- No TypeScript, no Docker, no CI/CD, no PDF/invoice export (explicitly out of scope per plan).
-- Challans carry no monetary total beyond line totals; invoicing is out of scope.
-- Cancelling an already-confirmed challan is blocked (would require a
-  reverse-transaction policy decision) — only drafts can be cancelled.
-- SKU is unique and immutable once created (edit screen disables it).
-- `current_stock` for a new product is the "opening stock"; it is logged as an
-  `IN` movement and stored once.
-- JWT expires after 8h; users can log back in.
+```bash
+npm install
+npm start
+```
 
-## Known limitations
+Run `npm run db:setup` once against the production database before first use.
 
-- **Confirmed-challan cancellation** is intentionally not supported (see assumptions).
-- No email/SMS notifications for follow-ups.
-- No bulk import/export (CSV) of customers/products.
-- Frontend is intentionally dependency-light (no UI kit); styling is hand-written CSS.
-- No automated test suite checked in — verification was done via an end-to-end
-  API script (24 assertions) covering auth, CRUD, and the challan
-  confirm/oversell/snapshot rules.
-- Pagination is server-side; UI uses simple prev/next paging.
+### Frontend
 
-## Notes
+Suitable hosts include **Vercel**, **Netlify**, or any static hosting provider.
 
-- The provided `backend/.env` contains a local-development-only JWT secret and
-  a default local Postgres URL. For any non-local environment, create your own
-  `.env` from `.env.example` and use real secrets.
-=======
-# StockPulse-erp
->>>>>>> 68df4803e323a4f645eefc0a32c0df22c4c0f6ab
+```bash
+npm install
+npm run build
+```
+
+Publish directory:
+
+```text
+frontend/dist
+```
+
+---
+
+## License
+
+No license file is currently included. Add one before distributing this project publicly.
